@@ -7,22 +7,25 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+
+model Users {
   id      Int      @id @default(autoincrement())
   email   String   @unique
   password String
-  tokens   Token[]  
+  tokens   Tokens[]  
   credentials  Credentials[]
   notes  Notes[]
   cards  Cards[]
   wifiPasswords  WifiPasswords[]
-  softwareLicense SoftwareLicense[]
+  softwareLicense SoftwareLicenses[]
+  @@map("users")
 }
-model Token{
+model Tokens{
   id    Int    @id @default(autoincrement())
-  user    User @relation(fields:[userId], references: [id])
+  user    Users @relation(fields:[userId], references: [id])
   userId Int
   token String
+  @@map("tokens")
 }
 model Credentials{
   id    Int    @id @default(autoincrement())
@@ -30,17 +33,19 @@ model Credentials{
   name String
   url String
   password String
-  user    User @relation(fields:[userId], references: [id])
+  user    Users @relation(fields:[userId], references: [id])
   userId Int
   @@unique([title, userId])
+  @@map("credentials")
 }
 model Notes{
   id    Int    @id @default(autoincrement())
   title String
   description String
-  user    User @relation(fields:[userId], references: [id])
+  user    Users @relation(fields:[userId], references: [id])
   userId Int
   @@unique([title, userId])
+  @@map("notes")
 }
 
 model Cards{
@@ -53,9 +58,10 @@ model Cards{
   password String
   isVirtual Boolean
   type CardType
-  user    User @relation(fields:[userId], references: [id])
+  user    Users @relation(fields:[userId], references: [id])
   userId Int
   @@unique([title, userId])
+  @@map("cards")
 }
 enum CardType {
   CREDIT
@@ -67,17 +73,20 @@ model WifiPasswords{
   title String
   name String
   password String
-  user    User @relation(fields:[userId], references: [id])
+  user    Users @relation(fields:[userId], references: [id])
   userId Int
   @@unique([title, userId])
+  @@map("wifi_passwords")
 }
-model SoftwareLicense{
+model SoftwareLicenses{
   id    Int    @id @default(autoincrement())
   title String
   name String
   version String
   key String
-  user    User @relation(fields:[userId], references: [id])
+  user    Users @relation(fields:[userId], references: [id])
   userId Int
   @@unique([title, userId])
+
+  @@map("software_licenses")
 }
