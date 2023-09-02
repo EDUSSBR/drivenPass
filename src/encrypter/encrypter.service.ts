@@ -6,4 +6,7 @@ export class EncrypterService {
   hash(str: string) {
     return bcrypt.hashSync(str, this.saltRounds);
   }
+  compare(pass, str) {
+    return bcrypt.compareSync(pass, str);
+  }
 }
