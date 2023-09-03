@@ -8,7 +8,7 @@ import {
   Delete,
   UseGuards,
   ConflictException,
-  NotFoundException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { CredentialsService } from './credentials.service';
 import { CreateCredentialDto } from './dto/create-credential.dto';
@@ -35,6 +35,7 @@ export class CredentialsController {
         );
       }
       console.log(error);
+      throw new InternalServerErrorException();
     }
     return 'CREATED';
   }
@@ -64,14 +65,7 @@ export class CredentialsController {
   @UseGuards(AuthGuard)
   @Delete(':id')
   async remove(@Param('id') id: string, @User() userId: number) {
-    let deleted;
-    try {
-      deleted = await this.credentialsService.remove(+id, userId);
-    } catch (error) {
-      if (error.code === 'P2025') {
-        throw new NotFoundException('Cannot found credential');
-      }
-    }
+    const deleted = await this.credentialsService.remove(+id, userId);
     return { id: deleted.id };
   }
 }
