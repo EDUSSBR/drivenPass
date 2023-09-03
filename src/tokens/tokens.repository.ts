@@ -7,4 +7,10 @@ export class TokensRepository {
   async saveToken(token: string, userId: number) {
     await this.prisma.tokens.create({ data: { token, userId } });
   }
+  async verifyToken(token) {
+    return await this.prisma.tokens.findFirst({
+      where: { token },
+      include: { user: true },
+    });
+  }
 }
