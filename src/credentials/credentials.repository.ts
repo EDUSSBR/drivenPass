@@ -18,8 +18,8 @@ export class CredentialsRepository {
     return this.prisma.credentials.findMany({ where: { userId } });
   }
 
-  findOne(id, userId) {
-    return this.prisma.credentials.findFirst({ where: { userId, id } });
+  findOne(id) {
+    return this.prisma.credentials.findFirst({ where: { id } });
   }
 
   update(id: number, updateCredentialDto: UpdateCredentialDto, userId: number) {
