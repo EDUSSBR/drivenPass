@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateCredentialDto } from './dto/create-credential.dto';
 import { UpdateCredentialDto } from './dto/update-credential.dto';
 import { CredentialsRepository } from './credentials.repository';
@@ -33,11 +37,13 @@ export class CredentialsService {
   }
 
   async findOne(id: number, userId) {
-    const credential = await this.credentialsRepository.findOne(id, userId);
+    const credential = await this.credentialsRepository.findOne(id);
     if (!credential) {
       throw new NotFoundException('Cannot found credential');
     }
-
+    if (credential.userId !== userId) {
+      throw new ForbiddenException('Cannot found credential');
+    }
     return {
       ...credential,
       password: this.encrypter.decrypt(credential.password),
@@ -49,14 +55,11 @@ export class CredentialsService {
     updateCredentialDto: UpdateCredentialDto,
     userId: number,
   ) {
-    let password;
-    const credential = await this.credentialsRepository.findOne(id, userId);
-    if (!credential) {
-      throw new NotFoundException('Cannot found credential');
-    }
-    updateCredentialDto.password
-      ? (password = this.encrypter.encrypt(updateCredentialDto.password))
-      : (password = credential.password);
+    const credential = await this.findOne(id, userId);
+    const passwordToBeEncrypted = updateCredentialDto.password
+      ? updateCredentialDto.password
+      : credential.password;
+    const encryptedPassword = this.encrypter.encrypt(passwordToBeEncrypted);
     const {
       id: credentialID,
       title,
@@ -65,7 +68,11 @@ export class CredentialsService {
       password: newPassword,
     } = await this.credentialsRepository.update(
       id,
-      { ...credential, ...updateCredentialDto, password },
+      {
+        ...credential,
+        ...updateCredentialDto,
+        password: encryptedPassword,
+      },
       userId,
     );
     return {
@@ -77,7 +84,8 @@ export class CredentialsService {
     };
   }
 
-  remove(id: number, userId: number) {
+  async remove(id: number, userId: number) {
+    await this.findOne(id, userId);
     return this.credentialsRepository.remove(id, userId);
   }
 }
