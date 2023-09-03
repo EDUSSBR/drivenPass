@@ -21,20 +21,21 @@ export class AuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
     const { authorization } = request.headers;
-
     try {
       const token = authorization.replace('Bearer ', '');
-      const isSigned = this.jwtService.verify(token);
-      if (!isSigned) {
-        throw new UnauthorizedException();
-      }
-      const userInfo = await this.tokensRepository.verifyToken(token);
-      if (!userInfo) {
+      console.log(token);
+      const [isSigned, userInfo] = await Promise.all([
+        this.jwtService.verifyAsync(token, { secret: process.env.JWT_SECRET }),
+        this.tokensRepository.verifyToken(token),
+      ]);
+      console.log('isSigned, userInfo');
+      if (!(isSigned && userInfo)) {
         throw new UnauthorizedException();
       }
       request.user = userInfo;
       return true;
     } catch (error) {
+      console.log(error);
       throw new UnauthorizedException();
     }
   }

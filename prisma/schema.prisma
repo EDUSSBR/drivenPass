@@ -30,7 +30,7 @@ model Tokens{
 model Credentials{
   id    Int    @id @default(autoincrement())
   title String
-  name String
+  username String
   url String
   password String
   user    Users @relation(fields:[userId], references: [id])
