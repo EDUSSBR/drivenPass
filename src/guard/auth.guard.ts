@@ -23,16 +23,14 @@ export class AuthGuard implements CanActivate {
     const { authorization } = request.headers;
     try {
       const token = authorization.replace('Bearer ', '');
-      console.log(token);
       const [isSigned, userInfo] = await Promise.all([
         this.jwtService.verifyAsync(token, { secret: process.env.JWT_SECRET }),
         this.tokensRepository.verifyToken(token),
       ]);
-      console.log('isSigned, userInfo');
       if (!(isSigned && userInfo)) {
         throw new UnauthorizedException();
       }
-      request.user = userInfo;
+      request.user = userInfo.userId;
       return true;
     } catch (error) {
       console.log(error);
