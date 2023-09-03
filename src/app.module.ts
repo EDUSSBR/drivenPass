@@ -4,6 +4,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { UsersModule } from './users/users.module';
 import { EncrypterModule } from './encrypter/encrypter.module';
 import { TokensRepositoryModule } from './tokens/tokens.module';
+import { CredentialsModule } from './credentials/credentials.module';
 @Module({
   imports: [
     HealthModule,
@@ -11,6 +12,7 @@ import { TokensRepositoryModule } from './tokens/tokens.module';
     UsersModule,
     EncrypterModule,
     TokensRepositoryModule,
+    CredentialsModule,
   ],
   controllers: [],
   providers: [],
