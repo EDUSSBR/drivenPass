@@ -1,6 +1,15 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Delete,
+  UseGuards,
+  Param,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
+import { AuthGuard } from 'src/guard/auth.guard';
+import { User } from 'src/decorators/users.decorator';
 
 @Controller('users')
 export class UsersController {
@@ -14,5 +23,10 @@ export class UsersController {
   @Post('/signin')
   verifyUser(@Body() createUserDto: CreateUserDto) {
     return this.usersService.verifyAccount(createUserDto);
+  }
+  @UseGuards(AuthGuard)
+  @Delete('/:id')
+  deleteUser(@Param('id') id: string, @User() userId: number) {
+    return this.usersService.removeAccount(parseInt(id), userId);
   }
 }
