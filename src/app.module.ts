@@ -6,6 +6,7 @@ import { EncrypterModule } from './encrypter/encrypter.module';
 import { TokensRepositoryModule } from './tokens/tokens.module';
 import { CredentialsModule } from './credentials/credentials.module';
 import { NotesModule } from './notes/notes.module';
+import { CardsModule } from './cards/cards.module';
 @Module({
   imports: [
     HealthModule,
@@ -15,6 +16,7 @@ import { NotesModule } from './notes/notes.module';
     TokensRepositoryModule,
     CredentialsModule,
     NotesModule,
+    CardsModule,
   ],
   controllers: [],
   providers: [],
