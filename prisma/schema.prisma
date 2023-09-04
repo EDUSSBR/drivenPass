@@ -22,7 +22,7 @@ model Users {
 }
 model Tokens{
   id    Int    @id @default(autoincrement())
-  user    Users @relation(fields:[userId], references: [id])
+  user    Users @relation(fields:[userId], references: [id], onDelete: Cascade)
   userId Int
   token String
   @@map("tokens")
@@ -33,7 +33,7 @@ model Credentials{
   username String
   url String
   password String
-  user    Users @relation(fields:[userId], references: [id])
+  user    Users @relation(fields:[userId], references: [id], onDelete: Cascade)
   userId Int
   @@unique([title, userId])
   @@map("credentials")
@@ -42,7 +42,7 @@ model Notes{
   id    Int    @id @default(autoincrement())
   title String
   description String
-  user    Users @relation(fields:[userId], references: [id])
+  user    Users @relation(fields:[userId], references: [id], onDelete: Cascade)
   userId Int
   @@unique([title, userId])
   @@map("notes")
@@ -58,7 +58,7 @@ model Cards{
   password String
   isVirtual Boolean
   type CardType
-  user    Users @relation(fields:[userId], references: [id])
+  user    Users @relation(fields:[userId], references: [id], onDelete: Cascade)
   userId Int
   @@unique([title, userId])
   @@map("cards")
@@ -73,7 +73,7 @@ model WifiPasswords{
   title String
   name String
   password String
-  user    Users @relation(fields:[userId], references: [id])
+  user    Users @relation(fields:[userId], references: [id], onDelete: Cascade)
   userId Int
   @@unique([title, userId])
   @@map("wifi_passwords")
@@ -84,7 +84,7 @@ model SoftwareLicenses{
   name String
   version String
   key String
-  user    Users @relation(fields:[userId], references: [id])
+  user    Users @relation(fields:[userId], references: [id], onDelete: Cascade)
   userId Int
   @@unique([title, userId])
 
