@@ -1,6 +1,8 @@
 import {
   ConflictException,
+  ForbiddenException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -37,5 +39,15 @@ export class UsersService {
     const token = this.jwtService.sign({}, { subject: String(user.id) });
     await this.tokensRepository.saveToken(token, user.id);
     return token;
+  }
+  async removeAccount(id: number, userId: number) {
+    const user = await this.usersRepository.findUserById(id);
+    if (!user) {
+      throw new NotFoundException('Cannot found user.');
+    }
+    if (user.id !== userId) {
+      throw new ForbiddenException();
+    }
+    await this.usersRepository.removeUser(userId);
   }
 }
