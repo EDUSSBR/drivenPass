@@ -10,6 +10,7 @@ import { UsersRepository } from './users.repository';
 import { EncrypterService } from 'src/encrypter/encrypter.service';
 import { JwtService } from '@nestjs/jwt';
 import { TokensRepository } from 'src/tokens/tokens.repository';
+import { RemoveUserDto } from './dto/remove-user.dto';
 @Injectable()
 export class UsersService {
   constructor(
@@ -40,8 +41,17 @@ export class UsersService {
     await this.tokensRepository.saveToken(token, user.id);
     return token;
   }
-  async removeAccount(id: number, userId: number) {
+  async removeAccount(
+    id: number,
+    userId: number,
+    removeUserDto: RemoveUserDto,
+  ) {
+    const { password } = removeUserDto;
     const user = await this.usersRepository.findUserById(id);
+    const isValid = this.encrypter.compare(password, user.password);
+    if (!isValid) {
+      throw new UnauthorizedException();
+    }
     if (!user) {
       throw new NotFoundException('Cannot found user.');
     }

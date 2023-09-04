@@ -10,6 +10,7 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { AuthGuard } from 'src/guard/auth.guard';
 import { User } from 'src/decorators/users.decorator';
+import { RemoveUserDto } from './dto/remove-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -26,7 +27,11 @@ export class UsersController {
   }
   @UseGuards(AuthGuard)
   @Delete('/:id')
-  deleteUser(@Param('id') id: string, @User() userId: number) {
-    return this.usersService.removeAccount(parseInt(id), userId);
+  deleteUser(
+    @Body() removeUserDto: RemoveUserDto,
+    @Param('id') id: string,
+    @User() userId: number,
+  ) {
+    return this.usersService.removeAccount(parseInt(id), userId, removeUserDto);
   }
 }
